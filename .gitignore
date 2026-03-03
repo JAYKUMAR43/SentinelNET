@@ -2,5 +2,3 @@
 *.csv
 *.pkl
 *.joblib
-*.txt
-.ipynb_checkpoints/
