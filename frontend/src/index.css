@@ -1,0 +1,59 @@
+html {
+  scroll-behavior: smooth;
+}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-cyber-bg text-cyber-text font-sans antialiased;
+    background-image: 
+      radial-gradient(circle at 15% 50%, rgba(0, 143, 17, 0.05), transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(0, 204, 255, 0.05), transparent 25%);
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-cyber-surface/80 backdrop-blur-md border border-white/5 rounded-xl shadow-lg;
+  }
+  
+  .btn-primary {
+    @apply px-4 py-2 bg-cyber-primary/10 text-cyber-primary border border-cyber-primary/50 
+           rounded-lg hover:bg-cyber-primary hover:text-black hover:shadow-glow-primary 
+           transition-all duration-300 font-medium tracking-wide disabled:opacity-50;
+  }
+  
+  .btn-danger {
+    @apply px-4 py-2 bg-cyber-danger/10 text-cyber-danger border border-cyber-danger/50 
+           rounded-lg hover:bg-cyber-danger hover:text-white hover:shadow-glow-danger 
+           transition-all duration-300 font-medium tracking-wide disabled:opacity-50;
+  }
+  
+  .input-field {
+    @apply w-full bg-cyber-bg/50 border border-white/10 text-cyber-text rounded-lg px-4 py-2
+           focus:outline-none focus:border-cyber-primary focus:ring-1 focus:ring-cyber-primary 
+           transition-all placeholder:text-cyber-muted;
+  }
+}
+
+/* Custom Scrollbar for terminal vibe */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0f12; 
+}
+ 
+::-webkit-scrollbar-thumb {
+  background: #121a21; 
+  border: 1px solid #008f11;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00ff41; 
+}
