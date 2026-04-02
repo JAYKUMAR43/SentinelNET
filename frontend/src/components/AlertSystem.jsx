@@ -12,9 +12,10 @@ export default function AlertSystem() {
     audioRef.current = new Audio('https://actions.google.com/sounds/v1/alarms/spaceship_alarm.ogg');
     audioRef.current.volume = 0.5;
 
-    // Connect to WebSocket using native browser API
-    // Ensure this matches FastAPI port
-    const socket = new WebSocket('ws://127.0.0.1:8000/api/realtime/ws');
+    // Derive WebSocket URL from VITE_API_URL (http→ws, https→wss)
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+    const wsUrl = apiUrl.replace(/^http/, 'ws');
+    const socket = new WebSocket(`${wsUrl}/api/realtime/ws`);
 
     socket.onopen = () => {
       console.log('Connected to Real-time IDS Engine');

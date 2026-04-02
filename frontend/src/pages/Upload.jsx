@@ -29,7 +29,7 @@ export default function Upload() {
         const formData = new FormData();
         formData.append('file', file);
         
-        const res = await axios.post('http://127.0.0.1:8000/api/predict/bulk', formData);
+        const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/predict/bulk`, formData);
         
         if (res.data.status === 'error') {
           throw new Error(res.data.message);
@@ -44,7 +44,7 @@ export default function Upload() {
           throw new Error("Invalid JSON format. Please provide valid object.");
         }
         
-        const res = await axios.post('http://127.0.0.1:8000/api/predict/single', { features });
+        const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/predict/single`, { features });
         if (res.data.status === 'error') throw new Error(res.data.message);
         setResult(res.data);
       }
@@ -286,7 +286,7 @@ export default function Upload() {
                         btn.disabled = true;
                         btn.innerText = "Generating Analysis...";
                         
-                        const res = await axios.post('http://127.0.0.1:8000/api/explain', {
+                        const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/explain`, {
                           prediction: result.result.attack_type,
                           features: JSON.parse(singleInput)
                         });

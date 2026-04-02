@@ -20,7 +20,7 @@ export default function Dashboard() {
 
   const fetchStats = async () => {
     try {
-      const res = await axios.get('http://127.0.0.1:8000/api/stats');
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/stats`);
       setStats(res.data);
     } catch (error) {
       console.error("Error fetching dashboard stats:", error);
@@ -30,7 +30,7 @@ export default function Dashboard() {
   const handleReset = async () => {
     if (window.confirm("CRITICAL: This will PERMANENTLY clear all security logs and reset counters to zero. Proceed?")) {
       try {
-        await axios.post('http://127.0.0.1:8000/api/stats/reset');
+        await axios.post(`${import.meta.env.VITE_API_URL}/api/stats/reset`);
         fetchStats();
       } catch (error) {
         console.error("Error resetting stats:", error);

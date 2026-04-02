@@ -13,9 +13,10 @@ load_dotenv()
 app = FastAPI(title="SentinelNet Network Intrusion Detection API")
 
 # Setup CORS to allow React Frontend
+frontend_url = os.getenv("FRONTEND_URL", "*")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In production, restrict this
+    allow_origins=[frontend_url],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -55,3 +56,8 @@ async def global_exception_handler(request, exc):
 @app.get("/")
 def root():
     return {"message": "Welcome to SentinelNet AI-Powered NIDS"}
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port, reload=True)
