@@ -1,49 +1,85 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ShieldAlert, Fingerprint, ActivitySquare, ShieldCheck, TrendingUp, RotateCcw } from 'lucide-react';
+import { ShieldAlert, Fingerprint, ActivitySquare, ShieldCheck, TrendingUp, RotateCcw, Loader2 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, AreaChart, Area } from 'recharts';
 import axios from 'axios';
 
 const COLORS = ['#008f11', '#ff003c', '#ffb300', '#00ccff', '#ff00ff'];
 
-export default function Dashboard() {
-  const [stats, setStats] = useState({
-    total_scanned: 0,
-    attacks_detected: 0,
-    attack_percentage: 0,
-    most_common_attack: "Loading...",
-    threat_frequency: "N/A",
-    distribution: [],
-    history: [],
-    threat_log: []
-  });
+const initialStats = {
+  total_scanned: 0,
+  attacks_detected: 0,
+  attack_percentage: 0,
+  most_common_attack: "Loading...",
+  threat_frequency: "N/A",
+  distribution: [],
+  history: [],
+  threat_log: []
+};
 
-  const fetchStats = async () => {
+export default function Dashboard() {
+  const [stats, setStats] = useState(initialStats);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchStats = async (isInitial = false) => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/stats`);
+      if (isInitial) setIsLoading(true);
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/stats`, {
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        }
+      });
       setStats(res.data);
     } catch (error) {
       console.error("Error fetching dashboard stats:", error);
+    } finally {
+      if (isInitial) setIsLoading(false);
     }
   };
 
   const handleReset = async () => {
     if (window.confirm("CRITICAL: This will PERMANENTLY clear all security logs and reset counters to zero. Proceed?")) {
       try {
+        setIsLoading(true);
+        setStats(initialStats);
         await axios.post(`${import.meta.env.VITE_API_URL}/api/stats/reset`);
-        fetchStats();
+        await fetchStats(true);
       } catch (error) {
         console.error("Error resetting stats:", error);
+        setIsLoading(false);
       }
     }
   };
 
   useEffect(() => {
-    fetchStats();
-    // Refresh every 1 second for true real-time feel (matches WebSocket popups)
-    const interval = setInterval(fetchStats, 1000);
+    // Ensure state is completely reset on mount
+    setStats(initialStats);
+    
+    // Initial fetch with loading state
+    fetchStats(true);
+    
+    // Real-time polling without loading overlay
+    const interval = setInterval(() => fetchStats(false), 2000);
     return () => clearInterval(interval);
   }, []);
+
+  if (isLoading) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="flex flex-col items-center justify-center h-full w-full min-h-[600px] gap-6"
+      >
+        <Loader2 className="w-16 h-16 text-cyber-primary animate-spin" />
+        <div className="flex flex-col items-center text-center">
+          <p className="text-cyber-primary font-mono tracking-widest text-sm animate-pulse mb-1">ESTABLISHING SECURE CONNECTION...</p>
+          <p className="text-cyber-muted font-mono tracking-widest text-xs">SYNCHRONIZING THREAT DATA</p>
+        </div>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div 
