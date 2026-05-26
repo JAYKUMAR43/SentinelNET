@@ -21,10 +21,11 @@ export default function Dashboard() {
   const [stats, setStats] = useState(initialStats);
   const [isLoading, setIsLoading] = useState(true);
 
+  const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+
   const fetchStats = async (isInitial = false) => {
     try {
-      if (isInitial) setIsLoading(true);
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/stats`, {
+      const res = await axios.get(`${API_URL}/api/stats`, {
         headers: {
           'Cache-Control': 'no-cache, no-store, must-revalidate',
           'Pragma': 'no-cache',
@@ -34,8 +35,6 @@ export default function Dashboard() {
       setStats(res.data);
     } catch (error) {
       console.error("Error fetching dashboard stats:", error);
-    } finally {
-      if (isInitial) setIsLoading(false);
     }
   };
 
@@ -44,8 +43,11 @@ export default function Dashboard() {
       try {
         setIsLoading(true);
         setStats(initialStats);
-        await axios.post(`${import.meta.env.VITE_API_URL}/api/stats/reset`);
-        await fetchStats(true);
+        await axios.post(`${API_URL}/api/stats/reset`);
+        await fetchStats(false);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 2000);
       } catch (error) {
         console.error("Error resetting stats:", error);
         setIsLoading(false);
@@ -56,13 +58,22 @@ export default function Dashboard() {
   useEffect(() => {
     // Ensure state is completely reset on mount
     setStats(initialStats);
+    setIsLoading(true);
     
-    // Initial fetch with loading state
-    fetchStats(true);
+    // Initial fetch without blocking loading simulation
+    fetchStats(false);
+    
+    // Fixed 2.5-second simulation loading window as requested by the user
+    const loadingTimeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 2500);
     
     // Real-time polling without loading overlay
     const interval = setInterval(() => fetchStats(false), 2000);
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(loadingTimeout);
+      clearInterval(interval);
+    };
   }, []);
 
   if (isLoading) {

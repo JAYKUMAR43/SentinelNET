@@ -15,12 +15,12 @@ app = FastAPI(title="SentinelNet Network Intrusion Detection API")
 
 # Validate API Keys on startup
 print("\n" + "="*50)
-print("🚀 Initializing SentinelNet API Server")
+print("[START] Initializing SentinelNet API Server")
 print("="*50)
 if validate_api_keys():
-    print("✅ API Keys Configured Successfully")
+    print("[OK] API Keys Configured Successfully")
 else:
-    print("❌ Warning: Some API Keys are not configured")
+    print("[WARN] Warning: Some API Keys are not configured")
 print("="*50 + "\n")
 
 # Setup CORS to allow React Frontend

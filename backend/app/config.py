@@ -11,9 +11,9 @@ NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
 def validate_api_keys():
     """Validate that required API keys are configured."""
     if not GEMINI_API_KEY:
-        print("⚠️  WARNING: GEMINI_API_KEY not configured in .env file")
+        print("WARNING: GEMINI_API_KEY not configured in .env file")
     if not NVIDIA_API_KEY:
-        print("⚠️  WARNING: NVIDIA_API_KEY not configured in .env file")
+        print("WARNING: NVIDIA_API_KEY not configured in .env file")
     return bool(GEMINI_API_KEY or NVIDIA_API_KEY)
 
 # App settings
